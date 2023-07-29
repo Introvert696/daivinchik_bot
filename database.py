@@ -8,6 +8,7 @@ class Database():
         try:
             connection = sqlite3.connect(self.path_to_db)
             cursor = connection.cursor()
+            # sex - это пол, может быть 0 или 1, где 0 это парень, 1 девушка
             create_table_sql = ''' 
                 create table if not exists User(
                     id integer primary key autoincrement,
@@ -19,6 +20,8 @@ class Database():
                     is_activity integer null,
                     desc text null,
                     city text not null,
+                    sex integer not null,
+                    sex_search integer not null,
                     create_at text
                     );
                
@@ -74,13 +77,13 @@ class Database():
         except Exception as ex:
             return ex
 
-    def saveUser(self, id, username, name, age, photo, city, content):
+    def saveUser(self, id, username, name, age, photo, city, content, sex, sex_search):
         try:
             connection = sqlite3.connect(self.path_to_db)
             cursor = connection.cursor()
-            insert_sql = '''insert into User(tgId, tgUsername, name, age, photo, city, desc) values (?,?,?,?,?,?,?)'''
+            insert_sql = '''insert into User(tgId, tgUsername, name, age, photo, city, desc, sex, sex_search) values (?,?,?,?,?,?,?,?,?)'''
             cursor.execute(insert_sql, (id, username, name,
-                           age, photo, city, content))
+                           age, photo, city, content, sex, sex_search))
             connection.commit()
             cursor.close()
             connection.close()
@@ -105,3 +108,30 @@ class Database():
                     return data[0]
         except Exception as ex:
             return ex
+
+    def saveAnswer(self, from_user, to_user, like):
+        try:
+            connection = sqlite3.connect(self.path_to_db)
+            cursor = connection.cursor()
+            save_sql = f'''Insert into LikeHistory (from_user,to_user,like ) values ({from_user},{to_user},{like} )'''
+            cursor.execute(save_sql)
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return True
+        except Exception as ex:
+            return False
+
+    def getUserId(self, user_id):
+        try:
+            connection = sqlite3.connect(self.path_to_db)
+            cursor = connection.cursor()
+            save_sql = f''' select id from User where tgId={user_id}'''
+            cursor.execute(save_sql)
+            data = cursor.fetchall()
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return data[0][0]
+        except Exception as ex:
+            return False
