@@ -1,7 +1,11 @@
 import sqlite3
+'''
+В данном класе реализуется логика взаимодействия с БД
+'''
 
 
 class Database():
+    # путь до бд
     path_to_db = "znakomstvaDB.db"
 
     def createDB(self):
@@ -9,6 +13,7 @@ class Database():
             connection = sqlite3.connect(self.path_to_db)
             cursor = connection.cursor()
             # sex - это пол, может быть 0 или 1, где 0 это парень, 1 девушка
+            # скрипты для создания базы данных
             create_table_sql = ''' 
                 create table if not exists User(
                     id integer primary key autoincrement,
@@ -58,6 +63,7 @@ class Database():
             return True
         except Exception as ex:
             return ex
+    # Проверка пользователяв бд
 
     def checkUserId(self,  userId: str):
         try:
@@ -77,6 +83,7 @@ class Database():
         except Exception as ex:
             return ex
 
+    # сохранения новой анкеты юзера
     def saveUser(self, id, username, name, age, photo, city, content, sex, sex_search):
         try:
             connection = sqlite3.connect(self.path_to_db)
@@ -90,8 +97,8 @@ class Database():
             return True
         except Exception as ex:
             return ex
-    # Получаем рандомного пользователя из бд
 
+    # Получаем рандомного пользователя из бд
     def getRandomUser(self, id):
         try:
             data = []
@@ -109,6 +116,7 @@ class Database():
         except Exception as ex:
             return ex
 
+    # Сохраняем результат оценивания
     def saveAnswer(self, from_user, to_user, like):
         try:
             connection = sqlite3.connect(self.path_to_db)
@@ -122,6 +130,7 @@ class Database():
         except Exception as ex:
             return False
 
+    # Получаем id юзера в строке в таблице
     def getUserId(self, user_id):
         try:
             connection = sqlite3.connect(self.path_to_db)
