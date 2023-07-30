@@ -38,25 +38,15 @@ class Database():
                     from_user integer not null,
                     to_user integer not null,
                     like integer not null,
+                    is_match integer not null,
+                    content string null,
                     create_at text,
                     foreign key (from_user) references User(id),
                     foreign key (to_user) references User(id)
                     );
             '''
             cursor.execute(create_table_sql)
-            create_table_sql = '''
-             create table if not exists LikesOrder(
-                    id integer primary key autoincrement,
-                    from_user integer not null,
-                    to_user  integer not null,
-                    is_checked integer not null,
-                    is_match integet not null,
-                    create_at text,
-                    foreign key (to_user) references User (id),
-                    foreign key (from_user) references User (id)
-                    );
-            '''
-            cursor.execute(create_table_sql)
+
             connection.commit()
             cursor.close()
             connection.close()
@@ -121,8 +111,8 @@ class Database():
         try:
             connection = sqlite3.connect(self.path_to_db)
             cursor = connection.cursor()
-            save_sql = f'''Insert into LikeHistory (from_user,to_user,like ) values ({from_user},{to_user},{like} )'''
-            cursor.execute(save_sql)
+            save_sql = f'''Insert into LikeHistory(from_user,to_user,like ) values (?,?,?)'''
+            cursor.execute(save_sql, (from_user, to_user, like))
             connection.commit()
             cursor.close()
             connection.close()

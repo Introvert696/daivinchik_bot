@@ -15,6 +15,7 @@ photo = ""
 sex = 0
 sex_search = 0
 is_search = False
+current_anket = None
 
 # получаем рандомную анкету и отправляем ее
 
@@ -49,7 +50,7 @@ def handle_message(message):
     global content  # описание анкеты
     global is_search  # ищет ли юзер кого-то
 
-    current_anket = None  # текущая анкета
+    global current_anket   # текущая анкета
     # Проверка есть ли юзер в бд, если нету будем регать
     registered = dbworker.checkUserId(str(message.from_user.id))
 
@@ -85,8 +86,8 @@ def handle_message(message):
         # если дизлайк, то создаем запись в таблице, что он дизлайнул юзера
         # после возвращаем анкету
         elif is_search and message.text == "Дизлайк":
-            dbworker.saveAnswer(
-                getUserId(message.from_user.id, current_anket, 0))
+            user_id = dbworker.getUserId(message.from_user.id)
+            dbworker.saveAnswer(user_id, current_anket, 0)
             current_anket = getAnket(message)
             # если дизлайк то вызывем функцию, которая добавляет дизлайк строку в таблицу и обновляем current anket
         elif is_search and message.text == "Отправить сообщение":
